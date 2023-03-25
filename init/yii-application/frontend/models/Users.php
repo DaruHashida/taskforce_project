@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace frontend\models;
 
 use Yii;
 
@@ -20,7 +20,10 @@ use Yii;
  * @property string|null $own_tasks
  * @property string|null $performing_tasks
  * @property string|null $specialization
+ * @property string|null $bio
  * @property string|null $user_city
+ * @property int|null $responces_count
+ * @property string|null $phonenumber
  */
 class Users extends \yii\db\ActiveRecord
 {
@@ -39,7 +42,9 @@ class Users extends \yii\db\ActiveRecord
     {
         return [
             [['user_registration_date', 'birth_date'], 'safe'],
-            [['user_name', 'user_img', 'user_email', 'user_description', 'telegram', 'role', 'reputation', 'own_tasks', 'performing_tasks', 'specialization', 'user_city'], 'string', 'max' => 50],
+            [['responces_count'], 'integer'],
+            [['user_name', 'user_img', 'user_email', 'user_description', 'telegram', 'role', 'reputation', 'own_tasks', 'performing_tasks', 'specialization', 'bio', 'user_city', 'phonenumber'], 'string', 'max' => 50],
+            [['user_email'], 'unique'],
         ];
     }
 
@@ -62,7 +67,47 @@ class Users extends \yii\db\ActiveRecord
             'own_tasks' => 'Own Tasks',
             'performing_tasks' => 'Performing Tasks',
             'specialization' => 'Specialization',
+            'bio' => 'Bio',
             'user_city' => 'User City',
+            'responces_count' => 'Responces Count',
+            'phonenumber' => 'Phonenumber',
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return UsersQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new UsersQuery(get_called_class());
+    }
+    /**
+     * @param $id
+     * @return Users|null
+     */
+    public function getUser($id)
+    {
+        return self::findOne($id);
+    }
+
+    /**
+     * @return int
+     */
+    public function getAge()
+    {   $secs_in_year = 31536000;
+        $birthday = strtotime($this->birth_date);
+        $now_time = time();
+        $diff = $now_time-$birthday;
+        return intdiv($diff,$secs_in_year);
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getDate()
+    {
+        $date=date_create($this->user_registration_date);
+        return date_format($date,"Y F d");
     }
 }

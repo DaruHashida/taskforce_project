@@ -1,16 +1,27 @@
+<?php
+
+/* @var $this \yii\web\View */
+/* @var $content string */
+
+use yii\helpers\Html;
+use frontend\assets\AppAsset;
+AppAsset::register($this);
+?>
+<?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="<?= Yii::$app->language?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Taskforce</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="<?=Yii::$app->request->baseUrl;?>/css/style.css">
 </head>
 <body>
+<?php $this->beginBody() ?>
 <header class="page-header">
     <nav class="main-nav">
         <a href='#' class="header-logo">
-            <img class="logo-image" src="img/logotype.png" width=227 height=60 alt="taskforce">
+            <img class="logo-image" src="<?=Yii::$app->request->baseUrl;?>/img/logotype.png" width=227 height=60 alt="taskforce">
         </a>
         <div class="nav-wrapper">
             <ul class="nav-list">
@@ -31,7 +42,7 @@
     </nav>
     <div class="user-block">
         <a href="#">
-            <img class="user-photo" src="img/man-glasses.png" width="55" height="55" alt="Аватар">
+            <img class="user-photo" src="<?=Yii::$app->request->baseUrl;?>/img/man-glasses.png" width="55" height="55" alt="Аватар">
         </a>
         <div class="user-menu">
             <p class="user-name">Василий</p>
@@ -53,12 +64,7 @@
     </div>
 </header>
 <main class="main-content container">
-    <h4>Hello, world!!!</h4>
-    <?php
-    require_once '/vendor/autoload.php';
-    use src\logic\DataToSQLConverter;
-    $sql = new DataToSQLConverter("./data");
-    ?>
+    <?=$content; ?>
 </main>
 <section class="pop-up pop-up--refusal pop-up--close">
     <div class="pop-up--wrapper">
@@ -123,6 +129,8 @@
     </div>
 </section>
 <div class="overlay"></div>
-<script src="js/main.js"></script>
+<script src="<?=Yii::$app->request->baseUrl;?>/js/main.js"></script>
+<?php $this->endBody() ?>
 </body>
 </html>
+<?php $this->endPage() ?>

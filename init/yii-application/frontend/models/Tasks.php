@@ -1,8 +1,10 @@
 <?php
 
-namespace app\models;
+namespace frontend\models;
 
 use Yii;
+use frontend\models\Replies;
+use frontend\models\Users;
 
 /**
  * This is the model class for table "tasks".
@@ -22,6 +24,10 @@ use Yii;
  */
 class Tasks extends \yii\db\ActiveRecord
 {
+    public $noResponses;
+    public $noLocation;
+    public $filterPeriod;
+    const STATUS_NEW = 'new';
     /**
      * {@inheritdoc}
      */
@@ -50,17 +56,108 @@ class Tasks extends \yii\db\ActiveRecord
     {
         return [
             'task_id' => 'Task ID',
-            'task_creation_date' => 'Task Creation Date',
-            'task_title' => 'Task Title',
-            'task_description' => 'Task Description',
-            'task_host' => 'Task Host',
-            'task_performer' => 'Task Performer',
-            'task_expire_date' => 'Task Expire Date',
-            'task_status' => 'Task Status',
-            'task_actions' => 'Task Actions',
-            'task_coordinates' => 'Task Coordinates',
-            'task_price' => 'Task Price',
-            'task_category' => 'Task Category',
+            'task_creation_date' => 'Дата публикации',
+            'task_title' => 'Заголовок задания',
+            'task_description' => 'Описание задания',
+            'task_host' => 'Заказчик',
+            'task_performer' => 'Исполнитель',
+            'task_expire_date' => 'Время окончания задания',
+            'task_status' => 'Статус',
+            'task_actions' => 'Допустимые действия',
+            'task_coordinates' => 'Местоположение',
+            'task_price' => 'Цена',
+            'task_category' => 'Категория',
         ];
+    }
+    public function getFile()
+    {
+        return $this->hasMany(File::class, ['task_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Reply]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReplies()
+    {
+        return Replies::find()->where(['task_id'=>$this->task_id])->all();
+    }
+
+
+    /**
+     * Gets query for [[Category]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['name' => 'task_category']);
+    }
+
+    /**
+     * Gets query for [[Status]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+
+    public function getStatus()
+    {
+        return $this->hasOne(Status::class, ['name' => 'task_status']);
+    }
+
+    /**
+     * @return string|null
+     */
+
+
+    /**
+     * @return mixed
+     */
+
+    public function getOwner()
+    {
+        return Users::find()->where(['user_id'=>$this->task_host])->one();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPerformer()
+    {
+        return Users::find()->where(['user_id'=>$this->task_performer])->one();
+    }
+    /*public function getPlace()
+    {
+        return $this->hasOne(Status::class, ['name' => 'task_status']);
+    }*/
+
+    /**
+     * @return mixed
+     */
+    public function getSearchQuery()
+    {
+        $query = self::find();
+
+        $query->andFilterWhere(['task_category'=>$this->task_category]);
+
+        if ($this->noLocation) {
+            $query->andWhere('task_location IS NULL');
+        }
+
+        if ($this->noResponses)
+        {
+            $query->joinWith('replies r')->andWhere('r.id IS NULL');
+        }
+        if ($this->filterPeriod)
+        {
+            $query->andWhere('UNIX_TIMESTAMP(tasks.task_creation_date > UNIX_TIMESTAMP()-:period', [':period'=>$this->filterPeriod]);
+        }
+        return $query->orderBy('task_creation_date DESC');
+    }
+    public function getTask($id)
+    {
+        $query = self::findOne($id);
+        return $query;
     }
 }
