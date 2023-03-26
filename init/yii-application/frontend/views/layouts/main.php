@@ -5,6 +5,7 @@
 
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
+use src\logic\DataToSQLConverter;
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -18,6 +19,14 @@ AppAsset::register($this);
 </head>
 <body>
 <?php $this->beginBody() ?>
+<?php
+/*$sql_done = new DataToSQLConverter('C:\OSPanel\domains\taskforce.local\init\yii-application\frontend\web\data');
+$generator = $sql_done->getData();
+foreach ($generator as $value) {
+    echo "$value\n";
+}*/
+?>
+
 <header class="page-header">
     <nav class="main-nav">
         <a href='#' class="header-logo">

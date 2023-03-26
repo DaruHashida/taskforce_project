@@ -3,7 +3,7 @@
 
 namespace src\logic;
 use SplFileObject;
-
+use Yii;
 class DataToSQLConverter
 {
     public string $sql_data;
@@ -52,7 +52,8 @@ class DataToSQLConverter
                         $$key = [];
                     }
                     $types = array_shift($types);
-                } else {
+                }
+                else {
                     $values = explode(',', $line);
                     for ($i = 0; $i < count($keys); $i++) {
                         $key = $keys[$i];
@@ -69,6 +70,7 @@ class DataToSQLConverter
                     $data = $data . '(' . $line . '), ';
                 }
             }
+            $data = substr($data,0,-2);
             $columns = '';
             $columnsWithTypes = '';
             for ($i = 0; $i < count($keys); $i++) {
@@ -84,6 +86,9 @@ class DataToSQLConverter
             ($columnsWithTypes);";
 
             $sql_data = $sql_data . "INSERT INTO $tablename ($columns) VALUES $data;";
+            Yii::$app->db->createCommand("USE taskforce;")->execute();
+            Yii::$app->db->createCommand("DROP TABLE IF EXISTS $tablename")->execute();
+            Yii::$app->db->createCommand($sql_data)->execute();
             yield ($sql_data);
         }
     }

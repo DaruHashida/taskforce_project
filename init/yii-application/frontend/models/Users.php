@@ -40,11 +40,23 @@ class Users extends \yii\db\ActiveRecord
      */
     public function rules()
     {
-        return [
+        /*return [
             [['user_registration_date', 'birth_date'], 'safe'],
             [['responces_count'], 'integer'],
             [['user_name', 'user_img', 'user_email', 'user_description', 'telegram', 'role', 'reputation', 'own_tasks', 'performing_tasks', 'specialization', 'bio', 'user_city', 'phonenumber'], 'string', 'max' => 50],
             [['user_email'], 'unique'],
+        ];*/
+        return [
+            ['user_name','user_email','user_city','user_password','password_repeat'],'required'/*,'on'=>self::SCENARIO_DEFAULT*/],
+            ['user_email','email'],
+            ['user_email','unique'/*,'on'=>self::SCENARIO_DEFAULT*/],
+            ['phone','match','pattern'=>'^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$',
+                'message'=>'Номер телефона должен состоять из 11 цифр'],
+            ['password','match','pattern'=>'(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}']
+            ['password','compare',/*,'on'=>self::SCENARIO_DEFAULT*/],
+
+
+
         ];
     }
 
