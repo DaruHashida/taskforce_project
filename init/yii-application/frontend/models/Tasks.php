@@ -42,10 +42,13 @@ class Tasks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['task_title', 'task_category','task_price','task_description'],'required'/*,'on'=>self::SCENARIO_DEFAULT*/],
             [['task_creation_date'], 'safe'],
             [['task_price'], 'number'],
             [['task_title', 'task_host', 'task_performer', 'task_expire_date', 'task_status', 'task_actions', 'task_coordinates', 'task_category'], 'string', 'max' => 50],
             [['task_description'], 'string', 'max' => 1000],
+            ['task_expire_date', 'default', 'value' => null],
+            ['task_expire_date', 'date', 'timestampAttribute' => 'task_expire_date']
         ];
     }
 

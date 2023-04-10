@@ -9,7 +9,7 @@ use frontend\models\Replies;
 use frontend\models\TasksQuery;
 use Yii;
 
-class TasksController extends \yii\web\Controller
+class TasksController extends SecuredController
 {
     public function actionIndex()
     {
@@ -36,5 +36,27 @@ class TasksController extends \yii\web\Controller
                 'task_replies'=>$taskQuery->getReplies(),
                 'task_owner'=>$taskQuery->getOwner()]);
     }
+    public function actionAdd()
+    {
+        $task = new Tasks();
+        $categories = Categories::find()->orderBy('name')->all();
+        if (Yii::$app->request->getIsPost())
+        {
+            $task->load(Yii::$app->request->post());
 
+            if (Yii::$app->request->isAjax)
+            {
+                Yii::$app->response->format=Response::FORMAT_JSON;
+
+                return ActiveForm::validate($task);
+            }
+
+            if ($task->validate())
+            {
+                $task->save(false);
+                $this->goHome();
+            }
+        }
+        return $this->render('add',['model'=>$task,'categories'=>$categories]);
+    }
 }

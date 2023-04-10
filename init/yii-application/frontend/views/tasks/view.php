@@ -29,8 +29,8 @@ AppAsset::register($this);
         <p class="map-address town"><?=$data->task_coordinates?></p>
         <!--<p class="map-address">Новый арбат, 23, к. 1</p>-->
     </div>
-    <h4 class="head-regular">Отклики на задание</h4>
-
+    <h4 class="head-regular"><О></О>тклики на задание</h4>
+    
     <?php foreach ($task_replies as $reply):?>
         <?php
         $comment_user = Users::find()->where(['user_id'=>$reply->user_id])->one();

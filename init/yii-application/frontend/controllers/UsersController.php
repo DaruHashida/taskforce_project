@@ -5,7 +5,7 @@ namespace frontend\controllers;
 use frontend\models\Users;
 use Yii;
 
-class UsersController extends \yii\web\Controller
+class UsersController extends SecuredController
 {   public function actionView ($id)
     {
     $user = new Users();

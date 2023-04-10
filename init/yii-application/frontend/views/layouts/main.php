@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use src\logic\DataToSQLConverter;
 AppAsset::register($this);
+$auth = Yii::$app->getUser()->getIdentity();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -32,6 +33,7 @@ foreach ($generator as $value) {
         <a href='#' class="header-logo">
             <img class="logo-image" src="<?=Yii::$app->request->baseUrl;?>/img/logotype.png" width=227 height=60 alt="taskforce">
         </a>
+        <?php if (!Yii::$app->user->isGuest):?>
         <div class="nav-wrapper">
             <ul class="nav-list">
                 <li class="list-item list-item--active">
@@ -54,7 +56,7 @@ foreach ($generator as $value) {
             <img class="user-photo" src="<?=Yii::$app->request->baseUrl;?>/img/man-glasses.png" width="55" height="55" alt="Аватар">
         </a>
         <div class="user-menu">
-            <p class="user-name">Василий</p>
+            <p class="user-name"><?=$auth->user_name?></p>
             <div class="popup-head">
                 <ul class="popup-menu">
                     <li class="menu-item">
@@ -64,13 +66,13 @@ foreach ($generator as $value) {
                         <a href="#" class="link">Связаться с нами</a>
                     </li>
                     <li class="menu-item">
-                        <a href="#" class="link">Выход из системы</a>
+                        <a href="/site/logout" class="link">Выход из системы</a>
                     </li>
-
                 </ul>
             </div>
         </div>
     </div>
+<?php endif;?>
 </header>
 <main class="main-content container">
     <?=$content; ?>

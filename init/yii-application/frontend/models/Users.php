@@ -3,30 +3,20 @@
 namespace frontend\models;
 
 use Yii;
+use yii\base\Model;
+use yii\web\IdentityInterface;
+use yii\web\UploadedFile;
 
 /**
- * This is the model class for table "users".
- *
- * @property int $user_id
- * @property string $user_registration_date
- * @property string|null $user_name
- * @property string|null $user_img
- * @property string|null $user_email
- * @property string|null $birth_date
- * @property string|null $user_description
- * @property string|null $telegram
- * @property string|null $role
- * @property string|null $reputation
- * @property string|null $own_tasks
- * @property string|null $performing_tasks
- * @property string|null $specialization
- * @property string|null $bio
- * @property string|null $user_city
- * @property int|null $responces_count
- * @property string|null $phonenumber
+ * Class Users
+ * @package frontend\models
  */
-class Users extends \yii\db\ActiveRecord
+class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterface
 {
+    public $password_repeat;
+    public $old_password;
+    public $new_password;
+    public $new_password_repeat;
     /**
      * {@inheritdoc}
      */
@@ -37,28 +27,17 @@ class Users extends \yii\db\ActiveRecord
 
     /**
      * {@inheritdoc}
-     */
     public function rules()
     {
-        /*return [
-            [['user_registration_date', 'birth_date'], 'safe'],
-            [['responces_count'], 'integer'],
-            [['user_name', 'user_img', 'user_email', 'user_description', 'telegram', 'role', 'reputation', 'own_tasks', 'performing_tasks', 'specialization', 'bio', 'user_city', 'phonenumber'], 'string', 'max' => 50],
-            [['user_email'], 'unique'],
-        ];*/
-        return [
-            ['user_name','user_email','user_city','user_password','password_repeat'],'required'/*,'on'=>self::SCENARIO_DEFAULT*/],
-            ['user_email','email'],
-            ['user_email','unique'/*,'on'=>self::SCENARIO_DEFAULT*/],
-            ['phone','match','pattern'=>'^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$',
-                'message'=>'Номер телефона должен состоять из 11 цифр'],
-            ['password','match','pattern'=>'(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}']
-            ['password','compare',/*,'on'=>self::SCENARIO_DEFAULT*/],
+    return [
+    [['user_registration_date', 'birth_date'], 'safe'],
+    [['responces_count'], 'integer'],
+    [['user_name', 'user_img', 'user_email', 'user_description', 'telegram', 'role', 'reputation', 'own_tasks', 'performing_tasks', 'specialization', 'bio', 'user_city', 'password'], 'string', 'max' => 50],
+    [['phonenumber'], 'string', 'max' => 16],
+    [['user_email'], 'unique'],
+    ];
+    }  */
 
-
-
-        ];
-    }
 
     /**
      * {@inheritdoc}
@@ -74,7 +53,7 @@ class Users extends \yii\db\ActiveRecord
             'birth_date' => 'Birth Date',
             'user_description' => 'User Description',
             'telegram' => 'Telegram',
-            'role' => 'Role',
+            'role' => 'Я буду выполнять заказы',
             'reputation' => 'Reputation',
             'own_tasks' => 'Own Tasks',
             'performing_tasks' => 'Performing Tasks',
@@ -83,6 +62,11 @@ class Users extends \yii\db\ActiveRecord
             'user_city' => 'User City',
             'responces_count' => 'Responces Count',
             'phonenumber' => 'Phonenumber',
+            'password' => 'Password',
+            'old_password' => 'Старый пароль',
+            'new_password' => 'Новый пароль',
+            'password_repeat' => 'Повтор пароля',
+            'new_password_repeat' => 'Повтор пароля'
         ];
     }
 
@@ -94,13 +78,49 @@ class Users extends \yii\db\ActiveRecord
     {
         return new UsersQuery(get_called_class());
     }
+
+    /**
+     * @param $username
+     * @return mixed
+     */
+    public static function findByUserEmail(string $user_email)
+    {   return self::findOne(['user_email' => $user_email]);
+    }
+    /**
+     * @return array
+     */
+    public function rules()
+    {
+        /*return [
+            [['user_registration_date', 'birth_date'], 'safe'],
+            [['responces_count'], 'integer'],
+            [['user_name', 'user_img', 'user_email', 'user_description', 'telegram', 'role', 'reputation', 'own_tasks', 'performing_tasks', 'specialization', 'bio', 'user_city', 'phonenumber'], 'string', 'max' => 50],
+            [['user_email'], 'unique'],
+        ];*/
+        return [
+            [['user_name','user_email','user_city','password','password_repeat'],'required'/*,'on'=>self::SCENARIO_DEFAULT*/],
+            ['user_email','email'],
+            ['user_email','unique'/*,'on'=>self::SCENARIO_DEFAULT*/],
+            ['phonenumber','match','pattern'=>'/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/',
+                'message'=>'Номер телефона должен состоять из 11 цифр'],
+            ['password','match','pattern'=>'/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*.]{6,}/',
+                'message'=>'Пароль должен состоять не менее чем из 6-ти символов, содержать заглавную букву, знак препинания и цифру. 
+                Мы хотим, чтобы Вы были в безопасности:)'],
+            ['password','compare',/*,'on'=>self::SCENARIO_DEFAULT*/]
+        ];
+    }
+    
     /**
      * @param $id
      * @return Users|null
      */
-    public function getUser($id)
+    public function getUser(int $id)
     {
         return self::findOne($id);
+    }
+    public function getUserByName($name)
+    {
+        return self::findOne(['user_name'=>$name]);
     }
 
     /**
@@ -121,5 +141,10 @@ class Users extends \yii\db\ActiveRecord
     {
         $date=date_create($this->user_registration_date);
         return date_format($date,"Y F d");
+    }
+
+    public function validatePassword ($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password);
     }
 }

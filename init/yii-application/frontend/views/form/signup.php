@@ -1,10 +1,30 @@
 <?php
-
+use app\models\City;
+use app\models\User;
+use yii\widgets\ActiveForm;
 ?>
 
 <div class="center-block">
+    <?php $form = ActiveForm::begin();?>
     <div class="registration-form regular-form">
-        <form>
+        <h3 class="head-main head-task">Регистрация нового пользователя</h3>
+            <?=$form->field($model,'user_name')?>
+        <div class="half-wrapper">
+            <?=$form->field($model,'user_email')?>
+            <?=$form->field($model,'user_city')->dropDownList(array_column($cities, 'city', 'id'))?>
+        </div>
+        <div class="half-wrapper">
+            <?=$form->field($model,'password')->passwordInput()?>
+        </div>
+        <div class="half-wrapper">
+            <?=$form->field($model,'password_repeat')->passwordInput()?>
+        </div>
+        <?=$form->field($model,'role')->checkbox(['labelOptions' => ['class' => 'control-label checkbox-label']]);?>
+        <input type="submit" class="button button--blue" value="Создать аккаунт">
+        <?php ActiveForm::end(); ?>
+    </div>
+</div>
+        <!--<form>
             <h3 class="head-main head-task">Регистрация нового пользователя</h3>
             <div class="form-group">
                 <label class="control-label" for="username">Ваше имя</label>
@@ -48,6 +68,6 @@
                     я собираюсь откликаться на заказы</label>
             </div>
             <input type="submit" class="button button--blue" value="Создать аккаунт">
-        </form>
+        </form>-->
     </div>
 </div>
