@@ -88,6 +88,10 @@
       <path value="$PROJECT_DIR$/yii-application/vendor/codeception/module-filesystem" />
       <path value="$PROJECT_DIR$/yii-application/vendor/codeception/stub" />
       <path value="$PROJECT_DIR$/yii-application/vendor/codeception/module-asserts" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/yiisoft/yii2-jui" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/wapmorgan/yii2-inflection" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/wapmorgan/morphos" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/bower-asset/jquery-ui" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
