@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
             <div class="task-card">
                 <div class="header-task">
                     <a  href="http://taskforce.local/tasks/<?=$model->task_id?>" class="link link--block link--big"><?=Html::encode($model->task_title)?></a>
-                    <p class="price price--task"><?=$model->task_price;?></p>
+                    <p class="price price--task"><?=$model->task_price.' ₽';?></p>
                 </div>
                 <p class="info-text"><?=Yii::$app->formatter->asRelativeTime($model->task_creation_date);?></p>
                 <p class="task-text"><?=Html::encode(BaseStringHelper::truncate($model->task_description, 200));?>

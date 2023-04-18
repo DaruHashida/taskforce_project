@@ -7,6 +7,11 @@ use frontend\models\Categories;
 use frontend\models\Tasks;
 use frontend\models\Replies;
 use frontend\models\TasksQuery;
+use src\logic\CancelAction;
+use src\logic\ReactAction;
+use src\logic\FinishAction;
+use src\logic\DenyAction;
+use yii\helpers\Url;
 use Yii;
 
 class TasksController extends SecuredController
@@ -47,16 +52,26 @@ class TasksController extends SecuredController
             if (Yii::$app->request->isAjax)
             {
                 Yii::$app->response->format=Response::FORMAT_JSON;
-
                 return ActiveForm::validate($task);
             }
 
             if ($task->validate())
             {
                 $task->save(false);
-                $this->goHome();
+                return $this->redirect('/tasks/view/'.$task->task_id);
             }
         }
         return $this->render('add',['model'=>$task,'categories'=>$categories]);
+    }
+
+    public function actionCancel ($id)
+    {   $task= Tasks::findOne($id);
+        if (CancelAction::getUserProperties(Yii::$app->getUser()->getIdentity()->user_id, $task))
+        {
+            $task->delete();
+            $this->goHome();
+        }
+        else
+        {$this->goHome();}
     }
 }

@@ -16,7 +16,7 @@ use Yii;
  * @property int|null $price
  */
 class Replies extends \yii\db\ActiveRecord
-{
+{   protected static $_instance;
     /**
      * {@inheritdoc}
      */
@@ -61,5 +61,14 @@ class Replies extends \yii\db\ActiveRecord
     public static function find()
     {
         return new RepliesQuery(get_called_class());
+    }
+
+    public static function getInstance()
+    {
+        if (self::$_instance === null)
+        {
+            return new self;
+        }
+        return self::$_instance;
     }
 }

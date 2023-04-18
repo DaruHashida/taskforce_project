@@ -127,11 +127,12 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
      * @return int
      */
     public function getAge()
-    {   $secs_in_year = 31536000;
+    {   if ($this->birth_date)
+        {$secs_in_year = 31536000;
         $birthday = strtotime($this->birth_date);
         $now_time = time();
         $diff = $now_time-$birthday;
-        return intdiv($diff,$secs_in_year);
+        return intdiv($diff,$secs_in_year);}
     }
 
     /**

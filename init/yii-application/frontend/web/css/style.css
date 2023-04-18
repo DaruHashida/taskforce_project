@@ -374,6 +374,11 @@ template {
   .button--orange:hover {
     background-color: #f46200; }
 
+.button--red {
+  background-color: #fa6400; }
+.button--red:hover {
+  background-color: #f46200; }
+
 .button--pink {
   background-color: #fd306e; }
   .button--pink:hover {

@@ -5,7 +5,7 @@ namespace frontend\controllers;
 use frontend\models\Users;
 use frontend\models\Cities;
 use frontend\models\LoginForm;
-use yii\widgets\ActiveForm;;
+use yii\widgets\ActiveForm;
 use Yii;
 
 class FormController extends \yii\web\Controller

@@ -39,11 +39,13 @@ AppAsset::register($this);
         <div class="specialization">
             <p class="head-info">Специализации</p>
             <ul class="special-list">
+                <?php if ($data->specialization):?>
                 <?php foreach (explode(' ',$data->specialization) as $spec):?>
                 <li class="special-item">
                     <a href="/categories/<?=$spec?>" class="link link--regular"><?=Categories::findOne($spec)->name?></a>
                 </li>
                 <?php endforeach;?>
+                <?php endif;?>
             </ul>
         </div>
         <div class="bio">

@@ -2,6 +2,11 @@
 use app\models\City;
 use app\models\User;
 use yii\widgets\ActiveForm;
+use kartik\date\DatePicker;
+use yii\helpers\Html;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
+use yii\widgets\Pjax;
 ?>
 <div class="add-task-form regular-form">
         <?php $form = ActiveForm::begin();?>
@@ -30,9 +35,7 @@ use yii\widgets\ActiveForm;
                <!-- <span class="help-block">Error description is here</span>-->
             </div>
             <div class="form-group">
-                <?= $form->field($model, 'task_expire_date')->widget(\yii\jui\DatePicker::className(),
-                    [       'language' => 'ru',
-                            'dateFormat'=>'yyyy-MM-dd'])?>
+                <?= $form->field($model,'task_expire_date')->input('date') ?>
                 <!--<span class="help-block">Error description is here</span>-->
             </div>
         </div>

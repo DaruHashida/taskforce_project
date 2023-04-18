@@ -5,6 +5,11 @@ namespace frontend\models;
 use Yii;
 use frontend\models\Replies;
 use frontend\models\Users;
+use src\logic\Task;
+use src\logic\CancelAction;
+use src\logic\ReactAction;
+use src\logic\FinishAction;
+use src\logic\DenyAction;
 
 /**
  * This is the model class for table "tasks".
@@ -48,7 +53,7 @@ class Tasks extends \yii\db\ActiveRecord
             [['task_title', 'task_host', 'task_performer', 'task_expire_date', 'task_status', 'task_actions', 'task_coordinates', 'task_category'], 'string', 'max' => 50],
             [['task_description'], 'string', 'max' => 1000],
             ['task_expire_date', 'default', 'value' => null],
-            ['task_expire_date', 'date', 'timestampAttribute' => 'task_expire_date']
+            ['task_expire_date', 'date', 'format' => 'php:Y-m-d']
         ];
     }
 
@@ -113,7 +118,6 @@ class Tasks extends \yii\db\ActiveRecord
      * @return string|null
      */
 
-
     /**
      * @return mixed
      */
@@ -163,4 +167,30 @@ class Tasks extends \yii\db\ActiveRecord
         $query = self::findOne($id);
         return $query;
     }
+    /**
+     *
+     */
+    public function possibleAction (int $user_id, ?string $status)
+    {   $possible=[];
+        if (!isset($status))
+        {
+        $status = 'STATUS_NEW';
+        }
+        $actions_map = [
+            'STATUS_NEW' => [ReactAction::class, CancelAction::class],
+            'STATUS_PROCESSING' => [DenyAction::class, FinishAction::class],
+            'STATUS_FAILED'=>[]
+        ];
+
+        $possible_actions = $actions_map[$status];
+
+        foreach ($possible_actions as $action)
+        { if ($action::getUserProperties($user_id,$this))
+        {
+            array_push($possible, new $action($this->task_host, $this->task_performer));
+        }
+        }
+        return $possible;
+    }
+
 }

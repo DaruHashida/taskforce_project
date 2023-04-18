@@ -12,6 +12,8 @@ use yii\helpers\Html;
 use yii\web\View;
 use frontend\assets\AppAsset;
 AppAsset::register($this);
+$auth = Yii::$app->getUser()->getIdentity();
+$actions = $data->possibleAction($auth->user_id,$data->task_status);
 ?>
 <link rel="stylesheet" href="taskforce.local\frontend\web\css">
 <div class="left-column">
@@ -21,16 +23,15 @@ AppAsset::register($this);
     </div>
     <p class="task-description">
         <?=$data->task_description?></p>
-    <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
-    <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
-    <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
+    <?php foreach($actions as $action):?>
+        <?=$action->getButton()?>
+    <?php endforeach;?>
     <div class="task-map">
         <img class="map" src="<?=Yii::$app->request->baseUrl;?>/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
         <p class="map-address town"><?=$data->task_coordinates?></p>
         <!--<p class="map-address">Новый арбат, 23, к. 1</p>-->
     </div>
-    <h4 class="head-regular"><О></О>тклики на задание</h4>
-    
+    <h4 class="head-regular">Отклики на задание</h4>
     <?php foreach ($task_replies as $reply):?>
         <?php
         $comment_user = Users::find()->where(['user_id'=>$reply->user_id])->one();
@@ -48,7 +49,6 @@ AppAsset::register($this);
                         {for($i=0;$i<(5-$comment_user->reputation);$i++)
                         {echo("<span> </span>");}}?>
                     </div>
-
                     <p class="reviews"><?=$comment_user->responces_count?> отзыва</p>
                 </div>
                 <p class="response-message">
@@ -56,37 +56,17 @@ AppAsset::register($this);
                 </p>
             </div>
             <div class="feedback-wrapper">
-                <p class="info-text"><span class="current-time"><?=Yii::$app->formatter->asRelativeTime($reply->dt_add)?> </span>назад</p>
+                <p class="info-text"><span class="current-time"><?=Yii::$app->formatter->asRelativeTime($reply->dt_add)?> </span></p>
                 <p class="price price--small"><?=$reply->price.' ₽'?></p>
             </div>
+            <?php if ($auth->user_id == $data->task_host):?>
             <div class="button-popup">
-                <a href="#" class="button button--blue button--small">Принять</a>
-                <a href="#" class="button button--orange button--small">Отказать</a>
+                <a href="<?=Yii::$app->request->baseUrl.'/replies/accept/'.$reply->id?>" class="button button--blue button--small">Принять</a>
+                <a href="<?=Yii::$app->request->baseUrl.'/replies/decline/'.$reply->id?>" class="button button--orange button--small">Отказать</a>
             </div>
-        </div>
+            <?php endif;?>
+            </div>
     <?php endforeach;?>
-    <div class="response-card">
-        <img class="customer-photo" src="<?=Yii::$app->request->baseUrl;?>/img/man-sweater.png" width="146" height="156" alt="Фото заказчиков">
-        <div class="feedback-wrapper">
-            <a href="#" class="link link--block link--big">Дмитриев Андрей</a>
-            <div class="response-wrapper">
-                <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span></div>
-                <p class="reviews">8 отзывов</p>
-            </div>
-            <p class="response-message">
-                Примусь за выполнение задания в течение часа, сделаю быстро и качественно.
-            </p>
-
-        </div>
-        <div class="feedback-wrapper">
-            <p class="info-text"><span class="current-time">2 часа </span>назад</p>
-            <p class="price price--small">1999 ₽</p>
-        </div>
-        <div class="button-popup">
-            <a href="#" class="button button--blue button--small">Принять</a>
-            <a href="#" class="button button--orange button--small">Отказать</a>
-        </div>
-    </div>
 </div>
 <div class="right-column">
     <div class="right-card black info-card">
@@ -115,4 +95,7 @@ AppAsset::register($this);
             </li>
         </ul>
     </div>
+    <?php foreach($actions as $action):?>
+    <?=$action->getForm($data->task_id,$auth->user_id)?>
+    <?php endforeach;?>
 </div>

@@ -43,7 +43,7 @@ foreach ($generator as $value) {
                     <a href="#" class="link link--nav" >Мои задания</a>
                 </li>
                 <li class="list-item">
-                    <a href="#" class="link link--nav" >Создать задание</a>
+                    <a href="/tasks/add" class="link link--nav" >Создать задание</a>
                 </li>
                 <li class="list-item">
                     <a href="#" class="link link--nav" >Настройки</a>
@@ -77,7 +77,7 @@ foreach ($generator as $value) {
 <main class="main-content container">
     <?=$content; ?>
 </main>
-<section class="pop-up pop-up--refusal pop-up--close">
+<!--<section class="pop-up pop-up--refusal pop-up--close">
     <div class="pop-up--wrapper">
         <h4>Отказ от задания</h4>
         <p class="pop-up-text">
@@ -138,7 +138,7 @@ foreach ($generator as $value) {
             <button class="button--close" type="button">Закрыть окно</button>
         </div>
     </div>
-</section>
+</section>-->
 <div class="overlay"></div>
 <script src="<?=Yii::$app->request->baseUrl;?>/js/main.js"></script>
 <?php $this->endBody() ?>
