@@ -92,6 +92,8 @@
       <path value="$PROJECT_DIR$/yii-application/vendor/wapmorgan/yii2-inflection" />
       <path value="$PROJECT_DIR$/yii-application/vendor/wapmorgan/morphos" />
       <path value="$PROJECT_DIR$/yii-application/vendor/bower-asset/jquery-ui" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/kartik-v/yii2-krajee-base" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/kartik-v/yii2-widget-datepicker" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

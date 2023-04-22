@@ -6,6 +6,7 @@
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use src\logic\DataToSQLConverter;
+use yii\helpers\Url;
 AppAsset::register($this);
 $auth = Yii::$app->getUser()->getIdentity();
 ?>
@@ -30,7 +31,7 @@ foreach ($generator as $value) {
 
 <header class="page-header">
     <nav class="main-nav">
-        <a href='#' class="header-logo">
+        <a href='<?=Url::home()?>' class="header-logo">
             <img class="logo-image" src="<?=Yii::$app->request->baseUrl;?>/img/logotype.png" width=227 height=60 alt="taskforce">
         </a>
         <?php if (!Yii::$app->user->isGuest):?>

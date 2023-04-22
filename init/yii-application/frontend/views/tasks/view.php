@@ -11,7 +11,9 @@ use yii\helpers\BaseStringHelper;
 use yii\helpers\Html;
 use yii\web\View;
 use frontend\assets\AppAsset;
+use frontend\assets\YandexAsset;
 AppAsset::register($this);
+YandexAsset::register($this);
 $auth = Yii::$app->getUser()->getIdentity();
 $actions = $data->possibleAction($auth->user_id,$data->task_status);
 ?>
@@ -26,11 +28,34 @@ $actions = $data->possibleAction($auth->user_id,$data->task_status);
     <?php foreach($actions as $action):?>
         <?=$action->getButton()?>
     <?php endforeach;?>
-    <div class="task-map">
-        <img class="map" src="<?=Yii::$app->request->baseUrl;?>/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
-        <p class="map-address town"><?=$data->task_coordinates?></p>
-        <!--<p class="map-address">Новый арбат, 23, к. 1</p>-->
-    </div>
+        <?php if ($data->task_city): ?>
+        <?php $city = \frontend\models\Cities::findOne(['city'=> $data->task_city])?>
+            <div class="task-map">
+                <div class="map" id="map"></div>
+                <p class="map-address town"><?=$city->city;?></p>
+                <p class="map-address"><?=Html::encode($data->task_coordinates);?></p>
+            </div>
+
+            <?php
+            $lat = $city->lat; $long = $city->long;
+            $this->registerJs(<<<JS
+    ymaps.ready(init);
+    function init(){
+        var myMap = new ymaps.Map("map", {
+            center: ["$lat", "$long"],
+            zoom: 16
+        });
+        
+        myMap.controls.remove('trafficControl');
+        myMap.controls.remove('searchControl');
+        myMap.controls.remove('geolocationControl');
+        myMap.controls.remove('typeSelector');
+        myMap.controls.remove('fullscreenControl');
+        myMap.controls.remove('rulerControl');
+    }
+JS, View::POS_READY);
+            ?>
+        <?php endif; ?>
     <h4 class="head-regular">Отклики на задание</h4>
     <?php foreach ($task_replies as $reply):?>
         <?php

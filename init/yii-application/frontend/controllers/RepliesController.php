@@ -8,7 +8,7 @@ use frontend\models\Tasks;
 use frontend\models\Users;
 use src\logic\DenyAction;
 use yii\widgets\ActiveForm;
-use frontens\models\Opinions;
+use frontend\models\Opinions;
 
 class RepliesController extends SecuredController
 {
@@ -68,18 +68,18 @@ class RepliesController extends SecuredController
          * @var Task $task
          */
         $task = Tasks::findOne($id);
-        $opinion = new Opinions();
+        $user = Users::findOne($task->task_performer);
+        $opinion = Opinions::getInstance();
 
         if (Yii::$app->request->isPost) {
             $opinion->load(Yii::$app->request->post());
-            $opinion->user_id = $task->task_performer;
-            $opinion->responsor_id=Yii::$app->getUser()->getIdentity()->user_id;
             if ($opinion->validate()) {
-                $task->link('opinions', $opinion);
-                $task->goToNextStatus(new CompleteAction);
+                $task->task_status = 'STATUS_DONE';
+                $task->save(false);
+                $opinion->save(false);
             }
         }
 
-        return $this->redirect(['tasks/view', 'id' => $task->id]);
+        return $this->redirect(['tasks/view', 'id' => $task->task_id]);
     }
 }

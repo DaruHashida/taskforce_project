@@ -10,6 +10,7 @@ use src\logic\CancelAction;
 use src\logic\ReactAction;
 use src\logic\FinishAction;
 use src\logic\DenyAction;
+use frontend\helpers\YandexMapHelper;
 
 /**
  * This is the model class for table "tasks".
@@ -179,7 +180,8 @@ class Tasks extends \yii\db\ActiveRecord
         $actions_map = [
             'STATUS_NEW' => [ReactAction::class, CancelAction::class],
             'STATUS_PROCESSING' => [DenyAction::class, FinishAction::class],
-            'STATUS_FAILED'=>[]
+            'STATUS_FAILED'=>[],
+            'STATUS_DONE'=>[]
         ];
 
         $possible_actions = $actions_map[$status];
@@ -191,6 +193,25 @@ class Tasks extends \yii\db\ActiveRecord
         }
         }
         return $possible;
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->task_coordinates) {
+            $yandexHelper = new YandexMapHelper(getenv('YANDEX_API_KEY'));
+            $coords = $yandexHelper->getCoordinates($this->city->name, $this->location);
+
+            if ($coords) {
+                [$lat, $long] = $coords;
+
+                $this->lat = $lat;
+                $this->long = $long;
+            }
+        }
+
+        parent::beforeSave($insert);
+
+        return true;
     }
 
 }
