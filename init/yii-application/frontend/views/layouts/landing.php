@@ -1,4 +1,6 @@
 <?php
+
+use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use frontend\models\LoginForm;
@@ -54,7 +56,7 @@ AppAsset::register($this);
                 <a href="#" class="header__account-enter open-modal" data-for="enter-form">
                     <span>Вход</span></a>
                 или
-                <a href="signup.html" class="header__account-registration">
+                <a href="/form/signup" class="header__account-registration">
                     Регистрация
                 </a>
             </div>
@@ -68,7 +70,7 @@ AppAsset::register($this);
                 <p>Сломался кран на кухне? Надо отправить документы? Нет времени самому гулять с собакой?
                     У нас вы быстро найдёте исполнителя для любой жизненной ситуации?<br>
                     Быстро, безопасно и с гарантией. Просто, как раз, два, три. </p>
-                <button class="button">Создать аккаунт</button>
+                <a class="button" href="<?=Yii::$app->request->baseUrl;?>/form/signup">Создать аккаунт</a>
             </div>
             <div class="landing-center">
                 <div class="landing-instruction">
@@ -167,6 +169,7 @@ AppAsset::register($this);
                 mail@taskforce.com
             </p>
         </div>
+<?php if (!Yii::$app->user->isGuest):?>
         <div class="page-footer__links">
             <ul class="links__list">
                 <li class="links__item">
@@ -189,17 +192,19 @@ AppAsset::register($this);
                 </li>
             </ul>
         </div>
+<?php endif;?>
         <div class="page-footer__copyright">
             <a href="https://htmlacademy.ru">
                 <img class="copyright-logo"
-                     src="./img/academy-logo.png"
+                     src="<?=Yii::$app->request->baseUrl;?>/img/academy-logo.png"
                      width="185" height="63"
                      alt="Логотип HTML Academy">
             </a>
         </div>
     </div>
-</footer>
+    </footer>
 </div>
+
 <div class="overlay"></div>
 <script src="<?=Yii::$app->request->baseUrl;?>/js/landing.js"></script>
 <?php $this->endBody() ?>

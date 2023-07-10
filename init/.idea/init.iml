@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/yii-application/frontend/src/logic" isTestSource="true" packagePrefix="src\logic\" />
       <sourceFolder url="file://$MODULE_DIR$/yii-application/common/tests" isTestSource="true" packagePrefix="common\tests\" />
       <sourceFolder url="file://$MODULE_DIR$/yii-application/backend/tests/_support" isTestSource="true" packagePrefix="backend\tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/yii-application/source" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/yii-application/backend/tests" isTestSource="true" packagePrefix="backend\tests\" />
       <sourceFolder url="file://$MODULE_DIR$/yii-application/frontend/tests/_support" isTestSource="true" packagePrefix="frontend\tests\" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/behat/gherkin" />
@@ -93,12 +94,15 @@
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/wapmorgan/morphos" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/wapmorgan/yii2-inflection" />
+      <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yandex/geo" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2" />
+      <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-authclient" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-bootstrap5" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-composer" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-debug" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-faker" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-gii" />
+      <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-httpclient" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-jui" />
       <excludeFolder url="file://$MODULE_DIR$/yii-application/vendor/yiisoft/yii2-symfonymailer" />
     </content>

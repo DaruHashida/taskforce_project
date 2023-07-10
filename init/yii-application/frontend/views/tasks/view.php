@@ -16,8 +16,10 @@ AppAsset::register($this);
 YandexAsset::register($this);
 $auth = Yii::$app->getUser()->getIdentity();
 $actions = $data->possibleAction($auth->user_id,$data->task_status);
+$coords = Html::encode($data->task_coordinates);
+$adress_arr = explode(',',$coords);
+$city_from_map = '';
 ?>
-<link rel="stylesheet" href="taskforce.local\frontend\web\css">
 <div class="left-column">
     <div class="head-wrapper">
         <h3 class="head-main"><?=Html::encode($data->task_title)?></h3>
@@ -28,33 +30,118 @@ $actions = $data->possibleAction($auth->user_id,$data->task_status);
     <?php foreach($actions as $action):?>
         <?=$action->getButton()?>
     <?php endforeach;?>
-        <?php if ($data->task_city): ?>
-        <?php $city = \frontend\models\Cities::findOne(['city'=> $data->task_city])?>
-            <div class="task-map">
-                <div class="map" id="map"></div>
-                <p class="map-address town"><?=$city->city;?></p>
-                <p class="map-address"><?=Html::encode($data->task_coordinates);?></p>
-            </div>
+        <?php if ($data->task_coordinates): ?>
+        <?php $city = \frontend\models\Cities::findOne([$auth->user_city])?>
 
             <?php
-            $lat = $city->lat; $long = $city->long;
-            $this->registerJs(<<<JS
+            if ($city) {
+                $lat = $city->lat;
+                $long = $city->long;
+                $city_name = $city->city ?? '';
+                $fuladdr = $city_name . ',' . Html::encode($data->task_coordinates);
+
+                $this->registerJs(<<<JS
     ymaps.ready(init);
+    
     function init(){
+        
         var myMap = new ymaps.Map("map", {
-            center: ["$lat", "$long"],
+            center:["$lat","$long"],
             zoom: 16
         });
+        // добавляем метку города
         
+        firstGeoObject = new ymaps.GeoObject(
+            {
+                geometry:
+                    { type: "Point",
+                      coordinates: ["$lat", "$long"],
+                    },
+                properties:
+                    {
+                        iconCaption:"$city_name"
+                    }
+            }, 
+            {
+                preset: 'islands#darkBlueDotIconWithCaption',
+                draggable:false
+            }
+        );
+        myMap.geoObjects.add(firstGeoObject);
+        
+        ymaps.geocode("$coords", 
+        {
+            results:1
+        }).then(function (res) {
+            var secondGeoObject = res.geoObjects.get(0);
+            secondGeoObject.properties.set('iconCaption',"$data->task_coordinates")
+            secondGeoObject.options.set('preset', 'islands#redDotIconWithCaption');
+            myMap.geoObjects.add(secondGeoObject);
+            myMap.setBounds(myMap.geoObjects.getBounds());
+            
+            const city = secondGeoObject.getLocalities().join(', ');
+            document.querySelector('.town').innerHTML = city;
+            const addr = secondGeoObject.getAddressLine();
+            document.querySelector('#address').innerHTML = addr; 
+        });
         myMap.controls.remove('trafficControl');
         myMap.controls.remove('searchControl');
         myMap.controls.remove('geolocationControl');
         myMap.controls.remove('typeSelector');
         myMap.controls.remove('fullscreenControl');
         myMap.controls.remove('rulerControl');
-    }
-JS, View::POS_READY);
+    } 
+    JS, View::POS_READY);
+            }
+            else{
+                $this->registerJs(<<<JS
+    ymaps.ready(init);
+    
+    function init(){
+        var secondGeoObject = null,
+        cord=null;
+        ymaps.geocode("$coords", 
+        {
+            results:1
+        }).then(function (res) {
+            secondGeoObject = res.geoObjects.get(0);
+            secondGeoObject.properties.set('iconCaption',"$data->task_coordinates")
+            secondGeoObject.options.set('preset', 'islands#redDotIconWithCaption');
+            cord = secondGeoObject.geometry.getCoordinates();
+            
+            const city = secondGeoObject.getLocalities().join(', ');
+            document.querySelector('.town').innerHTML = city;
+            const addr = secondGeoObject.getAddressLine();
+            document.querySelector('#address').innerHTML = addr;
+            return cord;
+        }).then(function(cords)
+        {
+            var myMap = new ymaps.Map("map", {
+            center: cord,
+            zoom: 16,
+        });
+             myMap.geoObjects.add(secondGeoObject);
+             myMap.setBounds(myMap.geoObjects.getBounds());
+             myMap.controls.remove('trafficControl');
+             myMap.controls.remove('searchControl');
+             myMap.controls.remove('geolocationControl');
+             myMap.controls.remove('typeSelector');
+             myMap.controls.remove('fullscreenControl');
+             myMap.controls.remove('rulerControl');
+        }
+        )
+
+    } 
+    JS, View::POS_READY);
+
+
+            }
             ?>
+            <div class="task-map">
+                <div class="map" id="map"> </div>
+                <p class="map-address town"></p>
+                <p class="map-address" id ="address"></p>
+            </div>
         <?php endif; ?>
     <h4 class="head-regular">Отклики на задание</h4>
     <?php foreach ($task_replies as $reply):?>
@@ -86,7 +173,9 @@ JS, View::POS_READY);
             </div>
             <?php if ($auth->user_id == $data->task_host):?>
             <div class="button-popup">
+                <?php if ($data->task_status != 'STATUS_PROCESSING'):?>
                 <a href="<?=Yii::$app->request->baseUrl.'/replies/accept/'.$reply->id?>" class="button button--blue button--small">Принять</a>
+                <?php endif; ?>
                 <a href="<?=Yii::$app->request->baseUrl.'/replies/decline/'.$reply->id?>" class="button button--orange button--small">Отказать</a>
             </div>
             <?php endif;?>
@@ -100,11 +189,11 @@ JS, View::POS_READY);
             <dt>Категория</dt>
             <dd><?=$data->task_category?></dd>
             <dt>Дата публикации</dt>
-            <dd><?=Yii::$app->formatter->asRelativeTime($data->task_creation_date)?></dd>
+            <dd><?=Yii::$app->formatter->asRelativeTime(strtotime($data->task_creation_date))?></dd>
             <dt>Срок выполнения</dt>
-            <dd><?=Yii::$app->formatter->asRelativeTime($data->task_expire_date)?></dd>
+            <dd><?=Yii::$app->formatter->asRelativeTime(strtotime($data->task_expire_date))?></dd>
             <dt>Статус</dt>
-            <dd><?=$data->task_status?></dd>
+            <dd><?=$data->getRussianStatusName()?></dd>
         </dl>
     </div>
     <div class="right-card white file-card">

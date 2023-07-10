@@ -10,7 +10,7 @@ use src\logic\CancelAction;
 use src\logic\ReactAction;
 use src\logic\FinishAction;
 use src\logic\DenyAction;
-use frontend\helpers\YandexMapHelper;
+use app\helpers\YandexMapHelper;
 
 /**
  * This is the model class for table "tasks".
@@ -33,6 +33,7 @@ class Tasks extends \yii\db\ActiveRecord
     public $noResponses;
     public $noLocation;
     public $filterPeriod;
+    public $loc_validation;
     const STATUS_NEW = 'new';
     /**
      * {@inheritdoc}
@@ -48,13 +49,18 @@ class Tasks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['task_title', 'task_category','task_price','task_description'],'required'/*,'on'=>self::SCENARIO_DEFAULT*/],
+            [['task_title', 'task_category','task_price','task_description','task_expire_date'],'required'/*,'on'=>self::SCENARIO_DEFAULT*/],
             [['task_creation_date'], 'safe'],
             [['task_price'], 'number'],
-            [['task_title', 'task_host', 'task_performer', 'task_expire_date', 'task_status', 'task_actions', 'task_coordinates', 'task_category'], 'string', 'max' => 50],
+            [['task_title', 'task_host', 'task_performer', 'task_expire_date', 'task_actions', 'task_coordinates', 'task_category'], 'string'],
             [['task_description'], 'string', 'max' => 1000],
             ['task_expire_date', 'default', 'value' => null],
-            ['task_expire_date', 'date', 'format' => 'php:Y-m-d']
+            ['task_creation_date','default','value'=>date("Y-m-d H:i:s")],
+            ['task_status','default','value'=>"STATUS_NEW"],
+            ['task_expire_date', 'date', 'format' => 'php:Y-m-d'],
+            ['loc_validation', 'validateL'],
+            ['loc_validation','default','value'=>'Адрес не определен!']
+
         ];
     }
 
@@ -76,6 +82,7 @@ class Tasks extends \yii\db\ActiveRecord
             'task_coordinates' => 'Местоположение',
             'task_price' => 'Цена',
             'task_category' => 'Категория',
+            'task_city'=>'Город, где требуется исполнить задание'
         ];
     }
     public function getFile()
@@ -195,23 +202,42 @@ class Tasks extends \yii\db\ActiveRecord
         return $possible;
     }
 
-    public function beforeSave($insert)
-    {
-        if ($this->task_coordinates) {
-            $yandexHelper = new YandexMapHelper(getenv('YANDEX_API_KEY'));
-            $coords = $yandexHelper->getCoordinates($this->city->name, $this->location);
+    public function getRussianStatusName()
 
-            if ($coords) {
-                [$lat, $long] = $coords;
-
-                $this->lat = $lat;
-                $this->long = $long;
-            }
-        }
-
-        parent::beforeSave($insert);
-
-        return true;
+    { $status_map = [
+        'STATUS_NEW' => 'Новое',
+        'STATUS_PROCESSING' => 'Выполняется',
+        'STATUS_FAILED'=> 'Отказ исполнителя',
+        'STATUS_DONE'=> 'Выполнено'
+    ];
+        return ($status_map[$this->task_status]);
     }
+
+    public function validateL ($attribute)
+    {
+        if ($this->task_coordinates && $this->loc_validation)
+        {
+            $this->addError($attribute, $this->loc_validation);
+        }
+    }
+
+//    public function beforeSave($insert)
+//    {
+//        if ($this->task_coordinates) {
+//            $yandexHelper = new YandexMapHelper(getenv('YANDEX_API_KEY'));
+//            $coords = $yandexHelper->getCoordinates($this->task_city, $this->task_coordinates);
+//
+//            if ($coords) {
+//                [$lat, $long] = $coords;
+//
+//                $this->lat = $lat;
+//                $this->long = $long;
+//            }
+//        }
+//
+//        parent::beforeSave($insert);
+//
+//        return true;
+//    }
 
 }

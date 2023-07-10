@@ -4,6 +4,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Categories;
+use frontend\models\Cities;
 use frontend\models\Tasks;
 use frontend\models\Replies;
 use frontend\models\TasksQuery;
@@ -24,13 +25,44 @@ class TasksController extends SecuredController
         $taskQuery = $task->getSearchQuery();
         $categories = Categories::find()->asArray()->all();
 
-        $models = $taskQuery->all();
+        $models = $taskQuery->andWhere('task_host !='.Yii::$app->user->getId())->all();
 
         return $this->render('index',
             ['models'=> $models,
             'task'=>$task,
             'categories'=>$categories]);
     }
+
+    public function actionIndexmy ()
+    {
+        $task = new Tasks();
+        $task->load(Yii::$app->request->post());
+
+        $taskQuery = $task->getSearchQuery();
+        $models = $taskQuery->andWhere(['task_host'=> Yii::$app->user->getId()])->all();
+        $categories = Categories::find()->asArray()->all();
+
+        return $this->render('index',
+            ['models'=> $models,
+                'task'=>$task,
+                'categories'=>$categories]);
+    }
+
+    public function actionIndexnew ()
+    {
+        $task = new Tasks();
+        $task->load(Yii::$app->request->post());
+
+        $taskQuery = $task->getSearchQuery();
+        $models = $taskQuery->andWhere(['task_status'=> 'STATUS_NEW'])->all();
+        $categories = Categories::find()->asArray()->all();
+
+        return $this->render('index',
+            ['models'=> $models,
+                'task'=>$task,
+                'categories'=>$categories]);
+    }
+
     public function actionView ($id)
     {   $task = new Tasks();
         $taskQuery = $task->getTask($id);
@@ -41,9 +73,11 @@ class TasksController extends SecuredController
                 'task_replies'=>$taskQuery->getReplies(),
                 'task_owner'=>$taskQuery->getOwner()]);
     }
+
     public function actionAdd()
     {
         $task = new Tasks();
+        $cities = Cities::find()->orderBy('city')->all();
         $categories = Categories::find()->orderBy('name')->all();
         if (Yii::$app->request->getIsPost())
         {
@@ -61,7 +95,9 @@ class TasksController extends SecuredController
                 return $this->redirect('/tasks/view/'.$task->task_id);
             }
         }
-        return $this->render('add',['model'=>$task,'categories'=>$categories]);
+        return $this->render('add',['model'=>$task,
+                            'categories'=>$categories,
+                            'cities'=>$cities]);
     }
 
     public function actionCancel ($id)
@@ -74,4 +110,5 @@ class TasksController extends SecuredController
         else
         {$this->goHome();}
     }
+
 }

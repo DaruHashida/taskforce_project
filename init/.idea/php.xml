@@ -94,6 +94,9 @@
       <path value="$PROJECT_DIR$/yii-application/vendor/bower-asset/jquery-ui" />
       <path value="$PROJECT_DIR$/yii-application/vendor/kartik-v/yii2-krajee-base" />
       <path value="$PROJECT_DIR$/yii-application/vendor/kartik-v/yii2-widget-datepicker" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/yiisoft/yii2-authclient" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/yandex/geo" />
+      <path value="$PROJECT_DIR$/yii-application/vendor/yiisoft/yii2-httpclient" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

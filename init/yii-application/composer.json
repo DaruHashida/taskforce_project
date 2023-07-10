@@ -21,9 +21,11 @@
         "wapmorgan/yii2-inflection": "^1.0",
         "yiisoft/yii2-jui": "^2.0",
         "kartik-v/yii2-widget-datepicker": "dev-master",
+        "yiisoft/yii2-authclient": "*"
 
     },
     "require-dev": {
+        "yandex/geo": "1.2.2.*",
         "yiisoft/yii2-debug": "~2.1.0",
         "yiisoft/yii2-gii": "~2.2.0",
         "yiisoft/yii2-faker": "~2.0.0",
@@ -37,6 +39,10 @@
         "symfony/browser-kit": "^6.0 || >=2.7 <= 4.2.4"
     },
     "autoload-dev": {
+        "psr-0":
+        {
+            "Yandex\\Geo": "source/"
+        },
         "psr-4": {
             "common\\tests\\": ["common/tests/", "common/tests/_support"],
             "backend\\tests\\": ["backend/tests/", "backend/tests/_support"],
@@ -58,5 +64,9 @@
             "type": "composer",
             "url": "https://asset-packagist.org"
         }
-    ]
+    ],
+    "support":
+    {
+        "source": "https://github.com/yandex-php/php-yandex-geo"
+    }
 }

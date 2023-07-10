@@ -103,10 +103,12 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
             ['user_email','unique'/*,'on'=>self::SCENARIO_DEFAULT*/],
             ['phonenumber','match','pattern'=>'/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/',
                 'message'=>'Номер телефона должен состоять из 11 цифр'],
-            ['password','match','pattern'=>'/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*.]{6,}/',
+            ['password','match','pattern'=>'/(?=.*[0-9])(?=.*[!@#$%^&*.])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*.]{6,}/',
                 'message'=>'Пароль должен состоять не менее чем из 6-ти символов, содержать заглавную букву, знак препинания и цифру. 
                 Мы хотим, чтобы Вы были в безопасности:)'],
-            ['password','compare',/*,'on'=>self::SCENARIO_DEFAULT*/]
+            ['password','compare',/*,'on'=>self::SCENARIO_DEFAULT*/],
+            ['role','default','value'=>0]
+
         ];
     }
     

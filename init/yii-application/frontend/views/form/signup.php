@@ -19,9 +19,10 @@ use yii\widgets\ActiveForm;
         <div class="half-wrapper">
             <?=$form->field($model,'password_repeat')->passwordInput()?>
         </div>
-        <?=$form->field($model,'role')->checkbox(['labelOptions' => ['class' => 'control-label checkbox-label']]);?>
+        <?=$form->field($model,'role')->checkbox(['label'=>'Я буду принимать заказы', 'labelOptions'=>['class'=>'control-label checkbox-label']])
+        ?>
         <input type="submit" class="button button--blue" value="Создать аккаунт">
-        <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end();?>
     </div>
 </div>
         <!--<form>

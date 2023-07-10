@@ -2,7 +2,10 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Auth;
+use frontend\models\Cities;
 use frontend\models\ResendVerificationEmailForm;
+use frontend\models\Users;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -18,6 +21,7 @@ use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use yii\authclient\AuthAction;
 
 /**
  * Site controller
@@ -41,7 +45,6 @@ class SiteController extends Controller
                     [
                         'allow' => true,
                         'roles'=>['?'],
-                        'actions'=>['index','login','signup'],
 /*                        'denyCallback' => function ($rule, $action) {
                             return $this->goHome();
                         }*/
@@ -64,6 +67,11 @@ class SiteController extends Controller
                 'class' => \yii\captcha\CaptchaAction::class,
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+            'vk'=>
+                [
+                    'class' => 'yii\authclient\AuthAction',
+                    'successCallback' => [$this, 'onAuthSuccess'],
+                ],
         ];
     }
 
@@ -266,4 +274,8 @@ class SiteController extends Controller
             'model' => $model
         ]);
     }
+
+
+    //LOGIC FOR VK!!!!
+
 }

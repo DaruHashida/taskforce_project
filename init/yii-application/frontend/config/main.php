@@ -51,6 +51,17 @@ return [
                 '<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>'
             ],
         ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'vk'=> [
+                    'class'=>'yii\authclient\clients\VKontakte',
+                    'clientId'=>'51695755',
+                    'clientSecret' => 'UJJz9eJcAFmR7LKybIIw'
+                ]
+            ],
+        ],
+
     ],
     'params' => $params,
 ];

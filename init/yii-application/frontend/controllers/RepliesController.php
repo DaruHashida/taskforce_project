@@ -19,10 +19,15 @@ class RepliesController extends SecuredController
         $user = Users::findOne(Yii::$app->getUser()->getIdentity()->user_id);
         if (DenyAction::getUserProperties($user->user_id, $task)) {
             $task->task_status = 'STATUS_FAILED';
+            if($task->save()) {
+                print_r("asd");
+            }else{
+                var_dump($task);exit;}
             $user->failed_tasks += 1;
             $user->save(false);
         }
         $this->redirect(['/tasks/'.$id]);
+        var_dump($task->errors);
     }
     public function actionResponse ()
     {   $reply = Replies::getInstance();
@@ -54,6 +59,7 @@ class RepliesController extends SecuredController
         $task->task_performer = $reply->user_id;
         $task->save(false);
         $reply->save(false);
+        $this->goHome();
     }
 
     public function actionDecline($id)

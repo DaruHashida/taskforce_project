@@ -11,16 +11,25 @@ use yii\helpers\BaseStringHelper;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
+
+
 ?>
  <div class="left-column">
             <h3 class="head-main head-task">Новые задания</h3>
+            <?php if (count($models) != 0):?>
             <?php foreach ($models as $model):?>
+                    <?php
+                    $relative_string = Yii::$app->formatter->asRelativeTime($model->task_creation_date);
+                    $nazad = strpos($relative_string," назад");
+                    $relative_string_bez_nazad = str_replace(' назад','',$relative_string);
+                    ?>
             <div class="task-card">
                 <div class="header-task">
                     <a  href="http://taskforce.local/tasks/<?=$model->task_id?>" class="link link--block link--big"><?=Html::encode($model->task_title)?></a>
                     <p class="price price--task"><?=$model->task_price.' ₽';?></p>
                 </div>
-                <p class="info-text"><?=Yii::$app->formatter->asRelativeTime($model->task_creation_date);?></p>
+                <p class="info-text"><?=$nazad?"<span class=\"current-time\">$relative_string_bez_nazad </span> назад":
+                        "<span class=\"current-time\">$relative_string</span>"?></p>
                 <p class="task-text"><?=Html::encode(BaseStringHelper::truncate($model->task_description, 200));?>
                 </p>
                 <div class="footer-task">
@@ -30,6 +39,7 @@ use yii\widgets\ActiveForm;
                 </div>
             </div>
             <?php endforeach;?>
+            <?php endif;?>
             <!--<div class="task-card">
                 <div class="header-task">
                     <a  href="#" class="link link--block link--big">Убраться в квартире после вписки</a>
@@ -81,8 +91,8 @@ use yii\widgets\ActiveForm;
                 <h4 class="head-card">Категории</h4>
                 <div class="form-group">
                     <div class="checkbox-wrapper">
-                        <?=Html::activeCheckboxList($task, 'task_category', array_column($categories,'name','id'),
-                        ['tag'=>null, 'itemOptions'=>['labelOptions'=>['class'=>'control-label']]]);?>
+                        <?=Html::activeCheckboxList($task, 'task_category', array_column($categories,'name','name'),
+                            ['tag'=>null, 'itemOptions'=>['labelOptions'=>['class'=>'control-label']]]);?>
                     </div>
                         <h4 class="head-card">Дополнительно</h4>
                     <div class="checkbox-wrapper">
