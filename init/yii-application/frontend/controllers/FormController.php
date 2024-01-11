@@ -119,12 +119,7 @@ class FormController extends \yii\web\Controller
         }
         $this->goHome();
         if (isset($password)) {
-            Yii::$app->session->setFlash('success',
-                [
-                    [
-                        Yii::t('app', "Ваш пароль:   $password   .")
-                    ]
-                ]);
+            Yii::$app->session->setFlash('success', "Ваш пароль:   $password   .");
         }
     }
 }

@@ -20,13 +20,9 @@ class Settings extends \yii\db\ActiveRecord
     {
         $user = Yii::$app->getUser()->getIdentity();
         return[
-            ['new_password','match','pattern'=>'/(?=.*[0-9])(?=.*[!@#$%^&*.])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*.]{6,}/',
-                'message'=>'Пароль должен состоять не менее чем из 6-ти символов, содержать заглавную букву, знак препинания и цифру. 
-                Мы хотим, чтобы Вы были в безопасности:)'],
-            ['password_repeat','compare','compareAttribute'=>'new_password','operator'=>'==','message' => 'Пароли не совпадают'],
             ['phone','match','pattern'=>'/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/',
                 'message'=>'Номер телефона должен состоять из 11 цифр'],
-            [['imageFile'],'file', 'maxSize' => 100000, 'skipOnEmpty' => true, 'message'=>'Ваше изображение не должно быть больше 100X100'],
+            [['imageFile'],'file', 'maxSize' => 1024*1024, 'skipOnEmpty' => true, 'message'=>'Ваше изображение не должно быть больше 1Мбайта!'],
             [['imageFile'],'file','extensions'=>'jpg, jpeg, png, gif','message'=>'Ваше изображение должно иметь либо формат jpg, либо jpeg, либо png, либо gif!'],
             ['email','email'],
             ['birthday', 'date', 'format' => 'php:Y-m-d'],
@@ -35,7 +31,6 @@ class Settings extends \yii\db\ActiveRecord
             ['user_name','string', 'min'=>3, 'max'=>30],
             ['img','string'],
             ['specialities', 'default','value'=>NULL],
-            ['old_password','string']
             ];
     }
 

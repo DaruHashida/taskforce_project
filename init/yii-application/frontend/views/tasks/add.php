@@ -10,9 +10,10 @@ use yii\widgets\Pjax;
 use frontend\assets\YandexAsset;
 YandexAsset::register($this);
 use yii\web\View;
+\yii\web\JqueryAsset::register($this);
 ?>
 <div class="add-task-form regular-form">
-        <?php $form = ActiveForm::begin();?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
         <h3 class="head-main head-main">Публикация нового задания</h3>
         <div class="form-group">
             <?=$form->field($model,'task_title')->label('Опишите суть работы',['class'=>'control-label'])?>
@@ -50,16 +51,23 @@ use yii\web\View;
                 <!--<span class="help-block">Error description is here</span>-->
             </div>
         </div>
+
         <div>
             <?= $form->field($model, 'task_host')->hiddenInput(['value'=>Yii::$app->getUser()->getIdentity()->user_id])->label(false)?>
         </div>
         <div>
             <?= $form->field($model, 'loc_validation')->hiddenInput(['id'=>'loc_valid'])->label(false)?>
         </div>
+        <?=$form->field($model,'attach_file',[
+            'inputOptions' => [
+                'id' => 'fileInput',
+                'class'=>'new-file'
+            ],
+        ])->fileInput()->label('Файлы',['class'=>'form-label'])?>
         <!--<p class="form-label">Файлы</p>
         <div class="new-file">
             Добавить новый файл
         </div>-->
-        <button class="button button--blue" id="submit" type="submit">Опубликовать</button>
-        <?php ActiveForm::end(); ?>
+        <button type="submit" class="button button--blue">Опубликовать</button>
+        <?php ActiveForm::end();?>
 </div>

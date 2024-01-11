@@ -66,7 +66,8 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
             'old_password' => 'Старый пароль',
             'new_password' => 'Новый пароль',
             'password_repeat' => 'Повтор пароля',
-            'new_password_repeat' => 'Повтор пароля'
+            'new_password_repeat' => 'Повтор пароля',
+            'done_tasks' => 'Выполненные задания'
         ];
     }
 
@@ -107,7 +108,8 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
                 'message'=>'Пароль должен состоять не менее чем из 6-ти символов, содержать заглавную букву, знак препинания и цифру. 
                 Мы хотим, чтобы Вы были в безопасности:)'],
             ['password','compare',/*,'on'=>self::SCENARIO_DEFAULT*/],
-            ['role','default','value'=>0]
+            ['role','default','value'=>0],
+            ['done_tasks','integer']
 
         ];
     }

@@ -9,15 +9,19 @@ ymaps.ready(init);
     mapArea = document.getElementById('map'),
     validity = document.getElementById('loc_valid');
 
-    form.addEventListener('submit', function (e)
-    {
-        geocode();
-    });
+    var geocodeL = function(e){geocode();};
 
+    suggest.addEventListener( 'change', function (e) {
+            if (suggest.value) {
+                form.addEventListener('submit', geocodeL);
+            } else {
+                form.removeEventListener('submit', geocodeL);
+            }
+        }
+    );
     function geocode()
     {
         var suggestVal = suggest.value;
-        if(suggestVal) {
             ymaps.geocode(suggestVal).then(
                 function (res) {
                     var obj = res.geoObjects.get(0),
@@ -55,7 +59,6 @@ ymaps.ready(init);
                     }
                 }
             );
-        }
     }
 
 

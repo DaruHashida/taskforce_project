@@ -15,7 +15,6 @@ $opinion = Opinions::getInstance();
         <div class="completion-form pop-up--form regular-form">
             <?php $form = ActiveForm::begin(['action'=>Yii::$app->request->baseUrl.'/replies/finish/'.$task_id]);?>
                 <div class="form-group">
-                    <label class="control-label" for="completion-comment">Ваш комментарий</label>
                     <?=$form->field($opinion,'description')->textarea()->label('Ваш комментарий')?>
                     <?= $form->field($opinion, 'rate', ['template' => '{label}{input}' . UIHelper::showStarRating(0, 'big', 5, true) . '{error}'])
                         ->hiddenInput(); ?>

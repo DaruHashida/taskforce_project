@@ -77,17 +77,6 @@ use yii\widgets\ActiveForm;
     <div class="right-card black">
         <div class="search-form">
             <?php $form = ActiveForm::begin() ?>
-           <!-- /*(['id' => 'search-form',
-                'options'=>['class'=>'search-form'],
-                'errorCssClass'=>'',
-                'fieldConfig'=>
-                    [
-                        'template'=>"{label}\n\r{input}",
-                        'options'=>['class'=>'form-group'],
-                    ]
-
-            ]);*/
--->
                 <h4 class="head-card">Категории</h4>
                 <div class="form-group">
                     <div class="checkbox-wrapper">
@@ -105,8 +94,8 @@ use yii\widgets\ActiveForm;
                         <?=$form->field($task, 'filterPeriod', ['template'=>'{input}'])->dropDownList([
                                 '3600'=>'За последний час', '86400'=>'За сутки','604800'=>'За неделю'], ['prompt'=>'Выбрать']);?>
                 <input type="submit" class="button button--blue" value="Искать">
+                </div>
         <?php ActiveForm::end();?>
-            </form>
-        </div>
     </div>
+</div>
 </div>

@@ -19,7 +19,7 @@
 	}
 	static function getUserProperties (int $user_id, object $obj):bool
 	{
-	return ($obj->task_host != $user_id);
+	return ($obj->task_host != $user_id && !(Replies::find()->where(['user_id'=>$user_id, 'task_id'=>$obj->task_id])->exists()));
 	}
 
 	public function getButton(): string
@@ -28,8 +28,8 @@
     }
 
     public function getForm($task_id): string
-    {   $view = require 'C:\OSPanel\domains\taskforce.local\init\yii-application\frontend\views\replies\reply.php';
-        return($view);
+    {   require 'C:\OSPanel\domains\taskforce.local\init\yii-application\frontend\views\replies\reply.php';
+        return('');
     }
 
     public function getReply(): object

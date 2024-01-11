@@ -37,16 +37,16 @@ foreach ($generator as $value) {
         <?php if (!Yii::$app->user->isGuest):?>
         <div class="nav-wrapper">
             <ul class="nav-list">
-                <li class="list-item list-item--active">
+                <li class="list-item <?php if (Yii::$app->request->url == '/tasks/indexnew') {echo('list-item--active');}?>">
                     <a href="/tasks/indexnew" class="link link--nav">Новое</a>
                 </li>
-                <li class="list-item">
+                <li class="list-item <?php if (preg_match('/^\/mytasks/',Yii::$app->request->url)) {echo('list-item--active');}?>">
                     <a href="/mytasks/index" class="link link--nav" >Мои задания</a>
                 </li>
-                <li class="list-item">
+                <li class="list-item <?php if (Yii::$app->request->url == '/tasks/add') {echo('list-item--active');}?>">
                     <a href="/tasks/add" class="link link--nav" >Создать задание</a>
                 </li>
-                <li class="list-item">
+                <li class="list-item <?php if (preg_match('/^\/settings/',Yii::$app->request->url)) {echo('list-item--active');}?>">
                     <a href="/settings/index" class="link link--nav" >Настройки</a>
                 </li>
             </ul>
@@ -78,7 +78,20 @@ foreach ($generator as $value) {
 <main class="main-content container">
     <?=$content; ?>
 </main>
-<div class="overlay"></div>
+<?php if (Yii::$app->session->hasFlash('success')): ?>
+    <div class="pop-up pop-up--open">
+        <div class="pop-up--wrapper">
+            <h4>Не забудьте сохранить пароль!</h4>
+            <?= Yii::$app->session->getFlash('success') ?>
+        </div>
+        <div class="button-container">
+            <button class="button--close" type="button">Закрыть окно</button>
+        </div>
+    </div>
+    <div class="overlay db"></div>
+<?php else:?>
+    <div class="overlay"></div>
+<?php endif;?>
 <script src="<?=Yii::$app->request->baseUrl;?>/js/main.js"></script>
 <?php $this->endBody() ?>
 </body>

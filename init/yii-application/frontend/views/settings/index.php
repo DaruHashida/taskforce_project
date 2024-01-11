@@ -63,7 +63,7 @@ $this->registerJs(<<<JS
             ])->fileInput()->label('Сменить аватар')?>
         </div>
         <div class="form-group">
-            <?=$form->field($model,'user_name')->textInput()->label('Ваше имя',['class'=>'control-label'])?>
+            <?=$form->field($model,'user_name')->label('Ваше имя',['class'=>'control-label'])?>
         </div>
         <div class="half-wrapper">
             <div class="form-group">
@@ -91,7 +91,13 @@ $this->registerJs(<<<JS
         </div>
         <div class="form-group">
             <div class="checkbox-profile">
-                <?=$form->field($model, 'specialities')->checkboxList(array_column($categories, 'name', 'id'))->label('Выбор специализаций',['class'=>'form-label'])?>
+<?//=$form->field($model, 'specialities')->checkboxList(array_column($categories, 'name', 'id'))->label('Выбор специализаций',['class'=>'form-label'])?>
+                <?= $form->field($model,'specialities')->checkboxList( array_column($categories, 'name', 'id') ,[
+                    'item' => function($index, $label, $name, $checked, $value) {
+                        $options = array_merge(['label' => $label, 'value' => $value], []);
+                        return '<div>' . Html::checkbox($name, $checked, $options) . '</div>';
+                    }
+                ]) ?>
             </div>
         </div>
         <button type="submit" class="button button--blue">Сохранить</button>

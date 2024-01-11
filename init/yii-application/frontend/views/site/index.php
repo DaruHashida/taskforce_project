@@ -21,7 +21,8 @@ AppAsset::register($this);
 <p><button class="button" type="submit">Войти</button></p>
 <?php ActiveForm::end(); ?>
 <?= yii\authclient\widgets\AuthChoice::widget([
-    'baseAuthUrl' => ['form/vk']
+    'baseAuthUrl' => ['form/vk'],
+    'popupMode' => false
 ]); ?>
 <button class="form-modal-close" type="button">Закрыть</button>
 <script src="<?=Yii::$app->request->baseUrl;?>/js/authchoice.js"></script>

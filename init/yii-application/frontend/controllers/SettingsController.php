@@ -21,8 +21,7 @@ public function actionIndex()
     $categories = Categories::find()->all();
     $settings = new Settings();
     if (Yii::$app->request->getIsPost())
-    {
-        $settings->load(Yii::$app->request->post());
+    {   $settings->load(Yii::$app->request->post());
         if (Yii::$app->request->isAjax)
         {
             Yii::$app->response->format=Response::FORMAT_JSON;
@@ -47,7 +46,6 @@ public function actionSecuritysettings()
         if (Yii::$app->request->isAjax)
         {
             Yii::$app->response->format=Response::FORMAT_JSON;
-            var_dump(ActiveForm::validate($settings));
             return ActiveForm::validate($settings);
         }
         if($settings->validate())

@@ -146,10 +146,11 @@ $city_from_map = '';
     <h4 class="head-regular">Отклики на задание</h4>
     <?php foreach ($task_replies as $reply):?>
         <?php
-        $comment_user = Users::find()->where(['user_id'=>$reply->user_id])->one();
+        if(Users::find()->where(['user_id'=>$reply->user_id])->exists())
+        {$comment_user = Users::find()->where(['user_id'=>$reply->user_id])->one();}
         ?>
         <div class="response-card">
-            <img class="customer-photo" src="<?=Yii::$app->request->baseUrl;?>/img/<?=$comment_user->user_img?>" width="146" height="156" alt="Фото заказчиков">
+            <img class="customer-photo" src="<?=Yii::$app->request->baseUrl;?><?=$comment_user->user_img?>" width="146" height="156" alt="Фото заказчиков">
             <div class="feedback-wrapper">
                 <a href="/users/<?=$comment_user->user_id?>" class="link link--block link--big"><?=$comment_user->user_name?></a>
                 <div class="response-wrapper">
@@ -175,8 +176,11 @@ $city_from_map = '';
             <div class="button-popup">
                 <?php if ($data->task_status != 'STATUS_PROCESSING'):?>
                 <a href="<?=Yii::$app->request->baseUrl.'/replies/accept/'.$reply->id?>" class="button button--blue button--small">Принять</a>
-                <?php endif; ?>
                 <a href="<?=Yii::$app->request->baseUrl.'/replies/decline/'.$reply->id?>" class="button button--orange button--small">Отказать</a>
+                <?php endif;?>
+            <?php elseif ($auth->user_id==$reply->user_id && !$data->task_performer):?>
+                <div class="button-popup">
+                <a href="<?=Yii::$app->request->baseUrl.'/replies/cancel/'.$reply->id?>" class="button button--orange button--small">Удалить</a>
             </div>
             <?php endif;?>
             </div>
@@ -196,20 +200,18 @@ $city_from_map = '';
             <dd><?=$data->getRussianStatusName()?></dd>
         </dl>
     </div>
-    <div class="right-card white file-card">
-        <h4 class="head-card">Файлы задания</h4>
-        <ul class="enumeration-list">
-            <li class="enumeration-item">
-                <a href="#" class="link link--block link--clip">my_picture.jpg</a>
-                <p class="file-size">356 Кб</p>
-            </li>
-            <li class="enumeration-item">
-                <a href="#" class="link link--block link--clip">information.docx</a>
-                <p class="file-size">12 Кб</p>
-            </li>
-        </ul>
-    </div>
+    <?php if ($data->task_file):?>
+        <div class="right-card white file-card">
+            <h4 class="head-card">Файлы задания</h4>
+            <ul class="enumeration-list">
+                <li class="enumeration-item">
+                    <a href="<?=$data->task_file?>" class="link link--block link--clip"><?=$data->task_file_name?></a>
+                    <p class="file-size"><?=$data->task_file_size?></p>
+                </li>
+            </ul>
+        </div>
+    <?php endif;?>
     <?php foreach($actions as $action):?>
-    <?=$action->getForm($data->task_id,$auth->user_id)?>
+        <?=$action->getForm($data->task_id,$auth->user_id)?>
     <?php endforeach;?>
 </div>

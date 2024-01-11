@@ -13,6 +13,7 @@ use src\logic\ReactAction;
 use src\logic\FinishAction;
 use src\logic\DenyAction;
 use yii\helpers\Url;
+use yii\web\UploadedFile;
 use Yii;
 
 class TasksController extends SecuredController
@@ -64,14 +65,20 @@ class TasksController extends SecuredController
     }
 
     public function actionView ($id)
-    {   $task = new Tasks();
+    {   if(Tasks::find($id)->exists()) {
+        $task = new Tasks();
         $taskQuery = $task->getTask($id);
         return $this->render('view',
-            ['data'=>$taskQuery,
-                'task_host'=>$taskQuery->getOwner(),
-                'task_performer'=>$taskQuery->getPerformer(),
-                'task_replies'=>$taskQuery->getReplies(),
-                'task_owner'=>$taskQuery->getOwner()]);
+            ['data' => $taskQuery,
+                'task_host' => $taskQuery->getOwner(),
+                'task_performer' => $taskQuery->getPerformer(),
+                'task_replies' => $taskQuery->replies,
+                'task_owner' => $taskQuery->getOwner()]);
+        }
+        else
+        {
+            $this->goHome();
+        }
     }
 
     public function actionAdd()
@@ -90,7 +97,11 @@ class TasksController extends SecuredController
             }
 
             if ($task->validate())
-            {
+            {   $task->attach_file = UploadedFile::getInstance($task, 'attach_file');
+                if ($task->attach_file)
+                {
+                    $task->upload();
+                }
                 $task->save(false);
                 return $this->redirect('/tasks/view/'.$task->task_id);
             }

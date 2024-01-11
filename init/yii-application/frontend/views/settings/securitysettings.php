@@ -19,11 +19,11 @@ AppAsset::register($this);
 <div class="left-menu left-menu--edit">
     <h3 class="head-main head-task">Настройки</h3>
     <ul class="side-menu-list">
-        <li class="side-menu-item side-menu-item--active">
-            <a class="link link--nav">Мой профиль</a>
+        <li class="side-menu-item ">
+            <a href="/settings/index" class="link link--nav">Мой профиль</a>
         </li>
-        <li class="side-menu-item">
-            <a href="/settings/index" class="link link--nav">Безопасность</a>
+        <li class="side-menu-item side-menu-item--active">
+            <a class="link link--nav">Безопасность</a>
         </li>
     </ul>
 </div>

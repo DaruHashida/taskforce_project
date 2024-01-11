@@ -6,6 +6,7 @@ use Yii;
 use frontend\models\Replies;
 use frontend\models\Tasks;
 use frontend\models\Users;
+use yii\web\Response;
 use src\logic\DenyAction;
 use yii\widgets\ActiveForm;
 use frontend\models\Opinions;
@@ -19,35 +20,28 @@ class RepliesController extends SecuredController
         $user = Users::findOne(Yii::$app->getUser()->getIdentity()->user_id);
         if (DenyAction::getUserProperties($user->user_id, $task)) {
             $task->task_status = 'STATUS_FAILED';
-            if($task->save()) {
-                print_r("asd");
-            }else{
-                var_dump($task);exit;}
             $user->failed_tasks += 1;
             $user->save(false);
         }
         $this->redirect(['/tasks/'.$id]);
-        var_dump($task->errors);
     }
     public function actionResponse ()
     {   $reply = Replies::getInstance();
-        if (Yii::$app->request->getIsPost())
-        {
-            $reply->load(Yii::$app->request->post());
 
-            if (Yii::$app->request->isAjax)
+            if (\Yii::$app->request->getIsPost())
             {
-                Yii::$app->response->format=Response::FORMAT_JSON;
-                return ActiveForm::validate($reply);
-            }
+                $reply->load(\Yii::$app->request->post());
 
-            if ($reply->validate())
-            {
-                $reply->save(false);
-                $this->goBack();
+                if (Yii::$app->request->isAjax) {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return ActiveForm::validate($reply);
+                }
+
+                if ($reply->validate()) {
+                    $reply->save();
+                    return $this->redirect(['tasks/view', 'id' => $reply->task_id]);
+                }
             }
-        }
-        echo(var_dump($reply));
 
     }
 
@@ -59,13 +53,21 @@ class RepliesController extends SecuredController
         $task->task_performer = $reply->user_id;
         $task->save(false);
         $reply->save(false);
-        $this->goHome();
+        return $this->redirect(['tasks/view', 'id' => $reply->task_id]);
     }
 
     public function actionDecline($id)
     {   $reply=Replies::findOne($id);
         $reply->is_approved = -1;
         $reply->save(false);
+    }
+
+    public function actionCancel($id)
+    {
+        $reply=Replies::findOne($id);
+        $task_id = $reply->task_id;
+        $reply->delete();
+        return $this->redirect(['tasks/view', 'id' => $task_id]);
     }
 
     public function actionFinish($id)
@@ -81,8 +83,10 @@ class RepliesController extends SecuredController
             $opinion->load(Yii::$app->request->post());
             if ($opinion->validate()) {
                 $task->task_status = 'STATUS_DONE';
+                $user->done_tasks+=1;
                 $task->save(false);
-                $opinion->save(false);
+                $user->save(false);
+                $opinion->save();
             }
         }
 

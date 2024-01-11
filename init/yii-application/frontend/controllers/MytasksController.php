@@ -16,13 +16,10 @@ class MytasksController extends SecuredController
         $task->load(Yii::$app->request->post());
 
         $taskQuery= $task->getSearchQuery();
+        $taskQuery = $taskQuery->andWhere(['task_host'=> Yii::$app->user->getId()]);
+        $taskQuery = $taskQuery->orWhere(['task_performer'=> Yii::$app->user->getId()]);
 
-        $role = Yii::$app->getUser()->getIdentity()->role;
-        if ($role)
-        {$searchQuery = $taskQuery->andWhere(['task_performer'=> Yii::$app->user->getId()]);}
-        else
-        {$searchQuery = $taskQuery->andWhere(['task_host'=> Yii::$app->user->getId()]);}
-        return $searchQuery;
+        return $taskQuery;
     }
 
     public function actionIndex ()

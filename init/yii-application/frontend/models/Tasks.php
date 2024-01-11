@@ -11,6 +11,7 @@ use src\logic\ReactAction;
 use src\logic\FinishAction;
 use src\logic\DenyAction;
 use app\helpers\YandexMapHelper;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "tasks".
@@ -34,6 +35,7 @@ class Tasks extends \yii\db\ActiveRecord
     public $noLocation;
     public $filterPeriod;
     public $loc_validation;
+    public $attach_file;
     const STATUS_NEW = 'new';
     /**
      * {@inheritdoc}
@@ -59,8 +61,12 @@ class Tasks extends \yii\db\ActiveRecord
             ['task_status','default','value'=>"STATUS_NEW"],
             ['task_expire_date', 'date', 'format' => 'php:Y-m-d'],
             ['loc_validation', 'validateL'],
-            ['loc_validation','default','value'=>'Адрес не определен!']
-
+            ['loc_validation','default','value'=>'Адрес не определен!'],
+            [['attach_file'],'file'],
+            [['attach_file'],'file', 'maxSize' => 1024*1024*100, 'skipOnEmpty' => true, 'message'=>'Ваш файл-описание задания не должен быть больше 100 Мб'],
+            [['attach_file'],'file', 'extensions'=>'jpg, jpeg, png, pdf, docx, txt, doc','message'=>'Ваш фай должен иметь либо формат jpg, либо jpeg, либо png, либо pdf, либо docx, либо doc, либо txt!'],
+            [['noResponses', 'noLocation'], 'boolean'],
+            [['filterPeriod'], 'number'],
         ];
     }
 
@@ -82,7 +88,9 @@ class Tasks extends \yii\db\ActiveRecord
             'task_coordinates' => 'Местоположение',
             'task_price' => 'Цена',
             'task_category' => 'Категория',
-            'task_city'=>'Город, где требуется исполнить задание'
+            'task_city'=>'Город, где требуется исполнить задание',
+            'noResponses'=>'Без откликов',
+            'noLocation'=>'Без адреса'
         ];
     }
     public function getFile()
@@ -95,10 +103,10 @@ class Tasks extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getReplies()
-    {
-        return Replies::find()->where(['task_id'=>$this->task_id])->all();
-    }
+//    public function getReplies()
+//    {
+//        return Replies::find()->where(['task_id'=>$this->task_id])->all();
+//    }
 
 
     /**
@@ -142,14 +150,14 @@ class Tasks extends \yii\db\ActiveRecord
     {
         return Users::find()->where(['user_id'=>$this->task_performer])->one();
     }
-    /*public function getPlace()
-    {
-        return $this->hasOne(Status::class, ['name' => 'task_status']);
-    }*/
-
     /**
      * @return mixed
      */
+    public function getReplies()
+    {
+        return $this->hasMany(Replies::className(), ['task_id'=>'task_id']);
+    }
+
     public function getSearchQuery()
     {
         $query = self::find();
@@ -166,10 +174,13 @@ class Tasks extends \yii\db\ActiveRecord
         }
         if ($this->filterPeriod)
         {
-            $query->andWhere('UNIX_TIMESTAMP(tasks.task_creation_date > UNIX_TIMESTAMP()-:period', [':period'=>$this->filterPeriod]);
+            $query->andWhere('UNIX_TIMESTAMP(tasks.task_creation_date) > UNIX_TIMESTAMP()-:period', [':period'=>$this->filterPeriod]);
         }
         return $query->orderBy('task_creation_date DESC');
     }
+    /*
+     *
+     */
     public function getTask($id)
     {
         $query = self::findOne($id);
@@ -201,7 +212,9 @@ class Tasks extends \yii\db\ActiveRecord
         }
         return $possible;
     }
-
+/*
+ *
+ */
     public function getRussianStatusName()
 
     { $status_map = [
@@ -212,7 +225,9 @@ class Tasks extends \yii\db\ActiveRecord
     ];
         return ($status_map[$this->task_status]);
     }
-
+/*
+ *
+ */
     public function validateL ($attribute)
     {
         if ($this->task_coordinates && $this->loc_validation)
@@ -220,7 +235,32 @@ class Tasks extends \yii\db\ActiveRecord
             $this->addError($attribute, $this->loc_validation);
         }
     }
-
+    /*
+     *
+     */
+    public function upload()
+    {   $user = Yii::$app->getUser()->getIdentity();
+        $id = $user->user_id;
+        $path = '\uploads\\'.$id.'\\'.$this->attach_file->baseName.'.'.$this->attach_file->extension;
+        $full_path_to_save = Yii::$app->basePath.'\web'.$path;
+        if (!is_dir(Yii::$app->basePath.'\web\uploads\\'.$id))
+            {
+                mkdir(Yii::$app->basePath.'\web\uploads\\'.$id,0777, true);
+            }
+        $this->task_file= $path;
+        $this->task_file_name = $this->attach_file->baseName.'.'.$this->attach_file->extension;
+        $this->task_file_size = $this->attach_file->size;
+        if ($this->task_file_size > 1024*1024)
+        {
+            $this->task_file_size = round($this->task_file_size/(1024*1024), 1).' мб';
+        }
+        if ($this->task_file_size > 1024)
+        {
+            $this->task_file_size = round($this->task_file_size/1024,1).' кб';
+        }
+        $this->attach_file->saveAs($full_path_to_save);
+        $this->attach_file = NULL;
+    }
 //    public function beforeSave($insert)
 //    {
 //        if ($this->task_coordinates) {

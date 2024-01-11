@@ -31,7 +31,7 @@ class Replies extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'description', 'task_id'], 'required'],
+            [['user_id', 'description', 'task_id', 'price'], 'required'],
             [['user_id', 'task_id', 'is_approved', 'price'], 'integer'],
             [['dt_add'], 'safe'],
             [['description'], 'string', 'max' => 255],

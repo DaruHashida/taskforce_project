@@ -53,21 +53,26 @@ if (starRating) {
     starRating.addEventListener("click", function(event) {
         var stars = event.currentTarget.childNodes;
         var rating = 0;
-
         for (var i = 0; i < stars.length; i++) {
             var element = stars[i];
-
             if (element.nodeName === "SPAN") {
-                element.className = "fill-star";
-                rating++;
+                element.className = "";
             }
-
+        }
+        for (var i = 0; i < stars.length; i++) {
+            var element = stars[i];
+            if (element.nodeName === "SPAN") {
+                    element.className = "fill-star";
+                    rating++;
+            }
             if (element === event.target) {
                 break;
             }
         }
 
+
         var inputField = starRating.previousSibling;
         inputField.value = rating;
     });
+
 }
